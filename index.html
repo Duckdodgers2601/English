@@ -1,2 +1,150 @@
-# English
-English games ESL
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>English Learning Games</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4dabf7, #339af0);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 40px;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      text-decoration: none;
+      color: black;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .game-image {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 70px;
+      background: #d0ebff;
+    }
+
+    .game-content {
+      padding: 20px;
+    }
+
+    .game-content h2 {
+      margin: 0;
+      font-size: 22px;
+      color: #1c7ed6;
+    }
+
+    .game-content p {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-top: 12px;
+      background: #ffd43b;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>English Learning Games</h1>
+    <p>Choose a game and start practicing!</p>
+  </header>
+
+  <div class="container">
+    <div class="games-grid">
+
+      <!-- GAME 1 -->
+      <a href="Review-April.html" class="game-card">
+        <div class="game-image">🔤</div>
+        <div class="game-content">
+          <h2>Phonics Review</h2>
+          <p>Practice sounds, spelling, and phonics patterns.</p>
+          <span class="tag">English</span>
+        </div>
+      </a>
+
+      <!-- GAME 2 (you can replace later) -->
+      <a href="#" class="game-card">
+        <div class="game-image">🎮</div>
+        <div class="game-content">
+          <h2>Coming Soon</h2>
+          <p>New game will be added here.</p>
+          <span class="tag">New</span>
+        </div>
+      </a>
+
+      <!-- GAME 3 -->
+      <a href="#" class="game-card">
+        <div class="game-image">📝</div>
+        <div class="game-content">
+          <h2>Coming Soon</h2>
+          <p>More practice activities coming soon.</p>
+          <span class="tag">New</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <footer>
+    Made for classroom practice ✨
+  </footer>
+
+</body>
+</html>
