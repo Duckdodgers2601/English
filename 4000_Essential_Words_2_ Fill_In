@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Vocabulary Sentence Game</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ffecd2, #fcb69f);
+  text-align: center;
+  padding: 20px;
+}
+.game-box {
+  max-width: 850px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+h1 { color: #ff6f61; }
+#question {
+  font-size: 26px;
+  background: #e3f2fd;
+  padding: 25px;
+  border-radius: 20px;
+}
+button {
+  font-size: 21px;
+  margin: 10px;
+  padding: 14px 25px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+}
+.choice {
+  display: block;
+  width: 80%;
+  margin: 12px auto;
+  background: #ffd54f;
+}
+.choice:hover { background: #ffca28; }
+.correct { background: #81c784 !important; }
+.wrong { background: #e57373 !important; }
+.start-btn { background: #4fc3f7; color: white; }
+#score, #lives, #progress {
+  font-size: 22px;
+  font-weight: bold;
+}
+.review {
+  text-align: left;
+  background: #f1f8e9;
+  padding: 20px;
+  border-radius: 18px;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-box">
+  <h1>🌟 Vocabulary Sentence Game 🌟</h1>
+
+  <p id="progress">Press Start!</p>
+  <p id="question">Fill in the blank with the correct word.</p>
+
+  <div id="choices"></div>
+
+  <p id="score">Score: 0</p>
+  <p id="lives">Lives: ❤️❤️❤️</p>
+
+  <button class="start-btn" onclick="startGame()">Start / Restart</button>
+
+  <div id="review"></div>
+</div>
+
+<script>
+const vocabulary = [
+  {
+    word: "abuse",
+    sentences: [
+        "Animal _____ is against the law.",
+        "Some people _____ their power.",
+        "The organization works to stop child _____."
+    ]
+},
+
+{
+    word: "abstract",
+    sentences: [
+        "Love is an _____ idea.",
+        "Justice is an _____ concept.",
+        "The artist enjoys painting _____ designs."
+    ]
+},
+
+{
+    word: "academy",
+    sentences: [
+        "She studies at a music _____.",
+        "The sports _____ trains young athletes.",
+        "He graduated from a military _____."
+    ]
+},
+
+{
+    word: "accompany",
+    sentences: [
+        "Can you _____ me to the station?",
+        "Parents should _____ young children.",
+        "A teacher will _____ the students on the trip."
+    ]
+},
+
+{
+    word: "accuse",
+    sentences: [
+        "The police _____ him of stealing.",
+        "Don't _____ people without evidence.",
+        "She was falsely _____ of cheating."
+    ]
+},
+
+{
+    word: "adequate",
+    sentences: [
+        "We have _____ food for everyone.",
+        "His explanation was _____ but not excellent.",
+        "The room is _____ for two people."
+    ]
+},
+
+{
+    word: "admission",
+    sentences: [
+        "_____ to the museum is free today.",
+        "She made an _____ that she was wrong.",
+        "Students paid for _____ to the concert."
+    ]
+},
+
+{
+    word: "agriculture",
+    sentences: [
+        "_____ is important to many countries.",
+        "Modern _____ uses advanced technology.",
+        "Many families work in _____."
+    ]
+},
+
+{
+    word: "amuse",
+    sentences: [
+        "The clown tried to _____ the children.",
+        "Funny stories always _____ me.",
+        "The movie was made to _____ young audiences."
+    ]
+},
+
+{
+    word: "annual",
+    sentences: [
+        "The school has an _____ sports day.",
+        "Our _____ meeting is next week.",
+        "This is an _____ tradition."
+    ]
+},
+
+{
+    word: "anxiety",
+    sentences: [
+        "She felt _____ before the exam.",
+        "Too much _____ can affect your health.",
+        "His _____ disappeared after hearing the good news."
+    ]
+},
+
+{
+    word: "anxious",
+    sentences: [
+        "She was _____ about the interview.",
+        "The students looked _____ before the test.",
+        "His parents were _____ to hear the results."
+    ]
+},
+
+{
+    word: "appliance",
+    sentences: [
+        "The washing machine is a useful _____.",
+        "Every kitchen has several _____.",
+        "The broken _____ needs to be repaired."
+    ]
+},
+
+{
+    word: "approve",
+    sentences: [
+        "The teacher _____ our project.",
+        "My parents _____ of my decision.",
+        "The manager refused to _____ the plan."
+    ]
+},
+
+{
+    word: "approximate",
+    sentences: [
+        "The _____ cost is fifty dollars.",
+        "Can you give me the _____ number?",
+        "The journey takes an _____ two hours."
+    ]
+},
+
+{
+    word: "atom",
+    sentences: [
+        "Everything is made of _____.",
+        "Scientists study the _____.",
+        "An _____ is extremely small."
+    ]
+},
+
+{
+    word: "bare",
+    sentences: [
+        "He walked on the _____ floor.",
+        "The trees were _____ during winter.",
+        "She had _____ feet."
+    ]
+},
+
+{
+    word: "basin",
+    sentences: [
+        "Wash your hands in the _____.",
+        "The _____ was full of water.",
+        "She filled the _____ before washing the dishes."
+    ]
+},
+
+{
+    word: "bold",
+    sentences: [
+        "She made a _____ decision.",
+        "The firefighter was very _____.",
+        "It was a _____ move to speak first."
+    ]
+},
+
+{
+    word: "breadth",
+    sentences: [
+        "Measure the _____ of the table.",
+        "The river's _____ changes during the year.",
+        "Its _____ is nearly two meters."
+    ]
+},
+
+{
+    word: "calculate",
+    sentences: [
+        "Can you _____ the total cost?",
+        "Students learned to _____ percentages.",
+        "The computer quickly _____ the answer."
+    ]
+},
+
+{
+    word: "carriage",
+    sentences: [
+        "The king traveled in a horse _____.",
+        "The old _____ was beautifully decorated.",
+        "The princess stepped out of the _____."
+    ]
+},
+
+{
+    word: "carve",
+    sentences: [
+        "He likes to _____ animals from wood.",
+        "She carefully _____ the turkey.",
+        "Artists _____ beautiful statues."
+    ]
+},
+
+{
+    word: "cast",
+    sentences: [
+        "The fisherman _____ his line into the river.",
+        "She _____ the ball across the field.",
+        "The actor was _____ in the main role."
+    ]
+},
+
+{
+    word: "century",
+    sentences: [
+        "The castle was built last _____.",
+        "A _____ is one hundred years.",
+        "Technology has changed a lot in this _____."
+    ]
+},
+
+{
+    word: "charitable",
+    sentences: [
+        "She is very _____ and helps poor families.",
+        "The company made a _____ donation.",
+        "Many _____ organizations help children."
+    ]
+},
+
+{
+    word: "chief",
+    sentences: [
+        "Safety is our _____ concern.",
+        "The _____ of police spoke to reporters.",
+        "He is the _____ engineer on the project."
+    ]
+},
+
+{
+    word: "comment",
+    sentences: [
+        "The teacher made a helpful _____.",
+        "Please _____ on my presentation.",
+        "She wrote a positive _____ online."
+    ]
+},
+
+{
+    word: "committee",
+    sentences: [
+        "The _____ will choose the winner.",
+        "A special _____ organized the event.",
+        "The school _____ met yesterday."
+    ]
+},
+
+{
+    word: "considerable",
+    sentences: [
+        "They spent a _____ amount of money.",
+        "There has been _____ improvement.",
+        "The project required _____ effort."
+    ]
+},
+
+{
+    word: "consist",
+    sentences: [
+        "The team _____ of ten players.",
+        "A healthy meal should _____ of vegetables, protein, and grains.",
+        "The class _____ mostly of beginners."
+    ]
+},
+
+{
+    word: "contract",
+    sentences: [
+        "Both companies signed a _____.",
+        "Please read the _____ carefully before signing.",
+        "The workers received a new _____."
+    ]
+},
+
+{
+    word: "congratulate",
+    sentences: [
+        "Let's _____ her on winning the competition.",
+        "Everyone came to _____ the happy couple.",
+        "I want to _____ you for your excellent work."
+    ]
+},
+
+{
+    word: "convict",
+    sentences: [
+        "The court decided to _____ the criminal.",
+        "The police arrested the _____ yesterday.",
+        "The evidence helped _____ the thief."
+    ]
+},
+
+{
+    word: "convert",
+    sentences: [
+        "They _____ the old factory into a museum.",
+        "Can you _____ dollars into euros?",
+        "The room was _____ed into an office."
+    ]
+},
+
+{
+    word: "convey",
+    sentences: [
+        "His smile _____ed happiness.",
+        "Pictures can _____ powerful emotions.",
+        "She tried to _____ her ideas clearly."
+    ]
+},
+
+{
+    word: "courage",
+    sentences: [
+        "It took great _____ to speak in public.",
+        "The firefighter showed incredible _____.",
+        "You need _____ to try something new."
+    ]
+},
+
+{
+    word: "criticize",
+    sentences: [
+        "Don't _____ others unfairly.",
+        "She tends to _____ every mistake.",
+        "The newspaper _____d the decision."
+    ]
+},
+
+{
+    word: "cupboard",
+    sentences: [
+        "The plates are in the _____.",
+        "She opened the _____ to get a cup.",
+        "Please put the food back in the _____."
+    ]
+},
+
+{
+    word: "debt",
+    sentences: [
+        "He worked hard to pay off his _____.",
+        "Many students graduate with _____.",
+        "The company was deeply in _____."
+    ]
+},
+
+{
+    word: "declare",
+    sentences: [
+        "The president _____d a national holiday.",
+        "Please _____ everything you bought overseas.",
+        "She _____d her intention to resign."
+    ]
+},
+
+{
+    word: "differ",
+    sentences: [
+        "Twins often _____ in personality.",
+        "My opinion _____s from yours.",
+        "The two paintings _____ greatly."
+    ]
+},
+
+{
+    word: "delay",
+    sentences: [
+        "Bad weather caused a _____.",
+        "The train was _____ed by an hour.",
+        "We apologize for the _____."
+    ]
+},
+
+{
+    word: "delicate",
+    sentences: [
+        "This glass is very _____.",
+        "Handle the flowers carefully because they are _____.",
+        "The baby has _____ skin."
+    ]
+},
+
+{
+    word: "depress",
+    sentences: [
+        "Bad news can _____ people.",
+        "Rainy weather sometimes _____es me.",
+        "Constant failure may _____ someone's confidence."
+    ]
+},
+
+{
+    word: "despair",
+    sentences: [
+        "He felt _____ after losing everything.",
+        "Never give up in _____.",
+        "She cried in complete _____."
+    ]
+},
+
+{
+    word: "despite",
+    sentences: [
+        "_____ the rain, we played outside.",
+        "She smiled _____ the bad news.",
+        "They finished the race _____ being tired."
+    ]
+},
+
+{
+    word: "detect",
+    sentences: [
+        "The machine can _____ smoke.",
+        "Doctors hope to _____ the disease early.",
+        "The test can _____ tiny changes."
+    ]
+},
+
+{
+    word: "devote",
+    sentences: [
+        "She _____d her life to helping others.",
+        "He _____s several hours each day to study.",
+        "They _____d all their energy to the project."
+    ]
+},
+
+{
+    word: "disadvantage",
+    sentences: [
+        "Being late is a _____.",
+        "Lack of experience can be a _____.",
+        "Every decision has an advantage and a _____."
+    ]
+},
+
+{
+    word: "disabled",
+    sentences: [
+        "The building has access for _____ people.",
+        "Special parking spaces are reserved for the _____.",
+        "The school supports _____ students."
+    ]
+},
+
+{
+    word: "duty",
+    sentences: [
+        "It is your _____ to help others.",
+        "The nurse was on _____ all night.",
+        "Parents have a _____ to protect their children."
+    ]
+},
+
+{
+    word: "eager",
+    sentences: [
+        "The children were _____ to open their gifts.",
+        "She was _____ to learn English.",
+        "Everyone was _____ to hear the results."
+    ]
+},
+
+{
+    word: "element",
+    sentences: [
+        "Trust is an important _____ of friendship.",
+        "Water contains two chemical _____.",
+        "Each _____ plays an important role."
+    ]
+},
+
+{
+    word: "elementary",
+    sentences: [
+        "She teaches at an _____ school.",
+        "These are _____ math problems.",
+        "The explanation is quite _____."
+    ]
+},
+
+{
+    word: "emerge",
+    sentences: [
+        "The sun _____d from behind the clouds.",
+        "New problems began to _____.",
+        "The butterfly will soon _____ from its cocoon."
+    ]
+},
+
+{
+    word: "enemy",
+    sentences: [
+        "The soldiers fought their _____.",
+        "Fear can become your worst _____.",
+        "The two countries were once _____."
+    ]
+},
+
+{
+    word: "engage",
+    sentences: [
+        "Students should _____ in class discussions.",
+        "The speaker tried to _____ the audience.",
+        "Children love to _____ in creative activities."
+    ]
+},
+
+{
+    word: "entrance",
+    sentences: [
+        "Please use the main _____.",
+        "There is only one _____ to the building.",
+        "The security guard stood at the _____."
+    ]
+},
+
+{
+    word: "exhaust",
+    sentences: [
+        "Running the marathon will _____ you.",
+        "Be careful not to _____ all your energy.",
+        "The long hike completely _____ed them."
+    ]
+},
+
+{
+    word: "exist",
+    sentences: [
+        "Dinosaurs no longer _____.",
+        "Do you think life could _____ on other planets?",
+        "Many traditions still _____ today."
+    ]
+},
+
+{
+    word: "expose",
+    sentences: [
+        "The report _____d the truth.",
+        "Do not _____ your skin to too much sun.",
+        "The documentary _____d the problem."
+    ]
+},
+
+{
+    word: "failure",
+    sentences: [
+        "_____ can help us learn valuable lessons.",
+        "The project ended in complete _____.",
+        "He accepted his _____ and tried again."
+    ]
+},
+
+{
+    word: "fame",
+    sentences: [
+        "The singer gained _____ quickly.",
+        "She dreamed of _____ and success.",
+        "His _____ spread around the world."
+    ]
+},
+
+{
+    word: "fault",
+    sentences: [
+        "The accident was not your _____.",
+        "Everyone makes mistakes, but don't always look for _____.",
+        "It was partly his _____."
+    ]
+},
+
+{
+    word: "fertile",
+    sentences: [
+        "The valley has _____ soil.",
+        "Farmers prefer _____ land.",
+        "The river makes the fields more _____."
+    ]
+},
+
+{
+    word: "firm",
+    sentences: [
+        "Be _____ when making your decision.",
+        "She works for a law _____.",
+        "His handshake was strong and _____."
+    ]
+},
+
+{
+    word: "flood",
+    sentences: [
+        "Heavy rain caused a _____.",
+        "The river began to _____ after the storm.",
+        "Many homes were damaged by the _____."
+    ]
+},
+
+{
+    word: "forecast",
+    sentences: [
+        "The weather _____ says it will rain tomorrow.",
+        "The news gave a five-day weather _____.",
+        "The company tried to _____ next year's sales."
+    ]
+},
+
+{
+    word: "foundation",
+    sentences: [
+        "Education is the _____ of success.",
+        "The workers finished the building's _____.",
+        "The charity is a non-profit _____."
+    ]
+},
+
+{
+    word: "fortune",
+    sentences: [
+        "She made a _____ in business.",
+        "He spent his entire _____.",
+        "Good _____ smiled on them that day."
+    ]
+},
+
+{
+    word: "fragment",
+    sentences: [
+        "They found a _____ of pottery.",
+        "Only a small _____ of the mirror remained.",
+        "Scientists discovered bone _____s."
+    ]
+},
+
+{
+    word: "fund",
+    sentences: [
+        "The charity created a _____ for children.",
+        "The government will _____ the project.",
+        "Money was collected for the emergency _____."
+    ]
+},
+
+{
+    word: "generation",
+    sentences: [
+        "Each _____ faces different challenges.",
+        "Young people represent the next _____.",
+        "Technology changes from one _____ to another."
+    ]
+},
+
+{
+    word: "geography",
+    sentences: [
+        "_____ helps us understand our world.",
+        "Her favorite subject is _____.",
+        "They studied the _____ of South America."
+    ]
+},
+
+{
+    word: "grand",
+    sentences: [
+        "They stayed in a _____ hotel.",
+        "The wedding was a _____ celebration.",
+        "The palace looked _____ and beautiful."
+    ]
+},
+
+{
+    word: "grave",
+    sentences: [
+        "The doctor said his condition was _____.",
+        "They visited their grandfather's _____.",
+        "This is a _____ mistake."
+    ]
+},
+
+{
+    word: "gradual",
+    sentences: [
+        "There was a _____ improvement.",
+        "Recovery was slow and _____.",
+        "The _____ change surprised no one."
+    ]
+},
+
+{
+    word: "guarantee",
+    sentences: [
+        "This phone comes with a two-year _____.",
+        "Hard work does not _____ success.",
+        "The company will _____ the quality."
+    ]
+},
+
+{
+    word: "guilty",
+    sentences: [
+        "The jury found him _____.",
+        "She felt _____ about lying.",
+        "The suspect was not _____."
+    ]
+},
+
+{
+    word: "handle",
+    sentences: [
+        "She _____d the problem calmly.",
+        "Can you _____ this heavy box?",
+        "He knows how to _____ difficult situations."
+    ]
+},
+
+{
+    word: "handicap",
+    sentences: [
+        "His injury became a _____.",
+        "Poor eyesight can be a _____ in sports.",
+        "The illness did not _____ her determination."
+    ]
+},
+
+{
+    word: "hardly",
+    sentences: [
+        "I could _____ hear the speaker.",
+        "She _____ ever eats fast food.",
+        "There was _____ any traffic."
+    ]
+},
+
+{
+    word: "hidden",
+    sentences: [
+        "They found a _____ treasure.",
+        "The door was _____ behind the wall.",
+        "The truth remained _____ for years."
+    ]
+},
+
+{
+    word: "ideal",
+    sentences: [
+        "This is the _____ place for a picnic.",
+        "The weather was _____ for hiking.",
+        "She found her _____ job."
+    ]
+},
+
+{
+    word: "ignore",
+    sentences: [
+        "Please don't _____ my question.",
+        "He decided to _____ the rude comments.",
+        "You should never _____ warning signs."
+    ]
+},
+
+{
+    word: "immigrant",
+    sentences: [
+        "The city welcomed many _____.",
+        "Her grandparents arrived as _____s.",
+        "Every _____ has a unique story."
+    ]
+},
+
+{
+    word: "impression",
+    sentences: [
+        "She made a good first _____.",
+        "My first _____ of him was positive.",
+        "His speech left a strong _____."
+    ]
+},
+
+{
+    word: "initial",
+    sentences: [
+        "We discussed our _____ ideas.",
+        "The _____ plan changed later.",
+        "His _____ reaction was surprise."
+    ]
+},
+
+{
+    word: "inn",
+    sentences: [
+        "They spent the night at a small _____.",
+        "The travelers stopped at a country _____.",
+        "The old _____ served homemade meals."
+    ]
+},
+
+{
+    word: "insist",
+    sentences: [
+        "She _____ed on paying the bill.",
+        "My parents _____ that I finish my homework first.",
+        "He continued to _____ that he was innocent."
+    ]
+},
+
+{
+    word: "intelligence",
+    sentences: [
+        "Her _____ impressed everyone.",
+        "Artificial _____ is changing many industries.",
+        "Success requires more than just _____."
+    ]
+},
+
+{
+    word: "intend",
+    sentences: [
+        "I _____ to finish the project today.",
+        "They _____ to travel next summer.",
+        "Do you _____ to join us?"
+    ]
+},
+
+{
+    word: "intent",
+    sentences: [
+        "She was _____ on finishing her work.",
+        "He listened with _____ interest.",
+        "The students remained _____ on the lesson."
+    ]
+},
+
+{
+    word: "interfere",
+    sentences: [
+        "Please don't _____ with my work.",
+        "Parents should not always _____ in their children's arguments.",
+        "Noise can _____ with your concentration."
+    ]
+},
+
+{
+    word: "journalist",
+    sentences: [
+        "The _____ interviewed the president.",
+        "She works as a _____ for a newspaper.",
+        "The _____ reported the breaking news."
+    ]
+},
+
+{
+    word: "legend",
+    sentences: [
+        "The story is based on an old _____.",
+        "The hero became a _____ after the battle.",
+        "Many people know the _____ of King Arthur."
+    ]
+},
+
+{
+    word: "loss",
+    sentences: [
+        "The company suffered a huge _____.",
+        "The family mourned the _____ of their pet.",
+        "His _____ of confidence affected his performance."
+    ]
+},
+
+{
+    word: "marvel",
+    sentences: [
+        "The Great Wall is a _____ of engineering.",
+        "Visitors _____ed at the beautiful waterfall.",
+        "Everyone stopped to _____ at the fireworks."
+    ]
+},
+
+{
+    word: "minister",
+    sentences: [
+        "The _____ announced the new law.",
+        "The prime _____ spoke on television.",
+        "The _____ met with foreign leaders."
+    ]
+},
+
+{
+    word: "nevertheless",
+    sentences: [
+        "It was raining; _____, we went hiking.",
+        "She was tired; _____, she finished the race.",
+        "The test was difficult. _____, everyone tried their best."
+    ]
+},
+
+{
+    word: "obey",
+    sentences: [
+        "Children should _____ their parents.",
+        "Drivers must _____ traffic laws.",
+        "The dog learned to _____ simple commands."
+    ]
+},
+
+{
+    word: "obtain",
+    sentences: [
+        "She _____ed a driver's license.",
+        "It is difficult to _____ permission.",
+        "He hopes to _____ better results."
+    ]
+},
+
+{
+    word: "occupation",
+    sentences: [
+        "Teaching is his _____.",
+        "Please write your _____ on the form.",
+        "Her _____ requires frequent travel."
+    ]
+},
+
+{
+    word: "officer",
+    sentences: [
+        "The police _____ helped the tourist.",
+        "An _____ checked our passports.",
+        "The army _____ gave the order."
+    ]
+},
+
+{
+    word: "oppose",
+    sentences: [
+        "Many people _____ the new law.",
+        "She decided to _____ the proposal.",
+        "Several groups _____d the construction project."
+    ]
+},
+
+{
+    word: "original",
+    sentences: [
+        "This painting is the _____.",
+        "Please return the _____ document.",
+        "His _____ idea became very successful."
+    ]
+},
+
+{
+    word: "passive",
+    sentences: [
+        "He remained _____ during the discussion.",
+        "Students should not be _____ in class.",
+        "She played a _____ role in the meeting."
+    ]
+},
+
+{
+    word: "perhaps",
+    sentences: [
+        "_____ we can meet tomorrow.",
+        "He is _____ the best player on the team.",
+        "_____ it will snow tonight."
+    ]
+},
+
+{
+    word: "permanent",
+    sentences: [
+        "They found a _____ solution.",
+        "She got a _____ job after graduation.",
+        "The damage was _____."
+    ]
+},
+
+{
+    word: "philosophy",
+    sentences: [
+        "She studied _____ at university.",
+        "His teaching _____ focuses on creativity.",
+        "The book explains ancient Greek _____."
+    ]
+},
+
+{
+    word: "pleasant",
+    sentences: [
+        "We had a _____ evening together.",
+        "The weather was warm and _____.",
+        "She has a very _____ personality."
+    ]
+},
+
+{
+    word: "portion",
+    sentences: [
+        "She ate a small _____ of cake.",
+        "Please give each child an equal _____.",
+        "Only a _____ of the class finished early."
+    ]
+},
+
+{
+    word: "possess",
+    sentences: [
+        "He _____es great talent.",
+        "Very few people _____ this skill.",
+        "The museum _____es many rare paintings."
+    ]
+},
+
+{
+    word: "potential",
+    sentences: [
+        "She has the _____ to become a great doctor.",
+        "Every child has enormous _____.",
+        "Scientists are studying the _____ benefits."
+    ]
+},
+
+{
+    word: "poverty",
+    sentences: [
+        "Many charities fight against _____.",
+        "The government introduced programs to reduce _____.",
+        "Millions of people still live in _____."
+    ]
+},
+
+{
+    word: "pound",
+    sentences: [
+        "The baby weighed eight _____.",
+        "The dog was taken to the animal _____.",
+        "I paid ten _____ for the book."
+    ]
+},
+
+{
+    word: "prevent",
+    sentences: [
+        "Exercise helps _____ illness.",
+        "The fence will _____ animals from entering.",
+        "Nothing could _____ the accident."
+    ]
+},
+
+{
+    word: "pride",
+    sentences: [
+        "She felt great _____ in her work.",
+        "Parents take _____ in their children's success.",
+        "His _____ stopped him from asking for help."
+    ]
+},
+
+{
+    word: "priest",
+    sentences: [
+        "The _____ led the wedding ceremony.",
+        "People spoke with the _____ after church.",
+        "The _____ gave an inspiring speech."
+    ]
+},
+
+{
+    word: "proceed",
+    sentences: [
+        "After lunch, we _____ with the meeting.",
+        "The teacher told the students to _____.",
+        "Once everyone arrived, the ceremony _____ed."
+    ]
+},
+
+{
+    word: "process",
+    sentences: [
+        "Learning a language is a long _____.",
+        "The company must _____ all the applications.",
+        "Cooking rice is an easy _____."
+    ]
+},
+
+{
+    word: "profession",
+    sentences: [
+        "Teaching is a respected _____.",
+        "She chose medicine as her _____.",
+        "His _____ requires many years of study."
+    ]
+},
+
+{
+    word: "publish",
+    sentences: [
+        "She hopes to _____ her first book.",
+        "The newspaper will _____ the story tomorrow.",
+        "The scientist decided to _____ the results."
+    ]
+},
+
+{
+    word: "pursue",
+    sentences: [
+        "He wants to _____ a career in science.",
+        "She decided to _____ her dream.",
+        "The police continued to _____ the suspect."
+    ]
+},
+
+{
+    word: "qualify",
+    sentences: [
+        "She worked hard to _____ for the final.",
+        "You must _____ before entering the competition.",
+        "Only the best teams _____ for the championship."
+    ]
+},
+
+{
+    word: "quantity",
+    sentences: [
+        "We bought a large _____ of rice.",
+        "The recipe requires a small _____ of salt.",
+        "The store sells food in large _____."
+    ]
+},
+
+{
+    word: "radiate",
+    sentences: [
+        "The sun _____s heat.",
+        "She seemed to _____ happiness.",
+        "The fireplace _____d warmth throughout the room."
+    ]
+},
+
+{
+    word: "recall",
+    sentences: [
+        "I can't _____ his name.",
+        "Can you _____ what happened yesterday?",
+        "She clearly _____ed the conversation."
+    ]
+},
+
+{
+    word: "reluctant",
+    sentences: [
+        "He was _____ to answer the question.",
+        "She felt _____ to leave her hometown.",
+        "The child was _____ to try the new food."
+    ]
+},
+
+{
+    word: "remind",
+    sentences: [
+        "Please _____ me to call my mom.",
+        "This song _____s me of my childhood.",
+        "Can you _____ him about tomorrow's meeting?"
+    ]
+},
+
+{
+    word: "resemble",
+    sentences: [
+        "She _____s her grandmother.",
+        "The two brothers closely _____.",
+        "This building _____s a castle."
+    ]
+},
+
+{
+    word: "resist",
+    sentences: [
+        "He couldn't _____ eating another cookie.",
+        "Many people _____ change.",
+        "The material can _____ high temperatures."
+    ]
+},
+
+{
+    word: "religious",
+    sentences: [
+        "They attended a _____ ceremony.",
+        "The city has many _____ festivals.",
+        "She comes from a very _____ family."
+    ]
+},
+
+{
+    word: "resort",
+    sentences: [
+        "They stayed at a beach _____.",
+        "Violence should only be a last _____.",
+        "Many tourists visit this mountain _____ every winter."
+    ]
+},
+
+{
+    word: "romantic",
+    sentences: [
+        "They enjoyed a _____ dinner.",
+        "She likes _____ movies.",
+        "Paris is considered a very _____ city."
+    ]
+},
+
+{
+    word: "roam",
+    sentences: [
+        "The cows _____ freely across the field.",
+        "We spent the afternoon _____ing around the city.",
+        "Wild animals _____ the forest."
+    ]
+},
+
+{
+    word: "satisfy",
+    sentences: [
+        "The meal _____ed everyone.",
+        "Nothing could _____ his curiosity.",
+        "The explanation did not _____ the teacher."
+    ]
+},
+
+{
+    word: "scale",
+    sentences: [
+        "The map uses a _____ of 1:1000.",
+        "The earthquake measured 6.5 on the _____.",
+        "The fish was covered with shiny _____."
+    ]
+},
+
+{
+    word: "secretary",
+    sentences: [
+        "The _____ answered the phone.",
+        "She works as the school _____.",
+        "The manager asked the _____ to prepare the documents."
+    ]
+},
+
+{
+    word: "secure",
+    sentences: [
+        "Please keep your password _____.",
+        "The police worked to _____ the building.",
+        "She finally found a _____ job."
+    ]
+},
+
+{
+    word: "severe",
+    sentences: [
+        "The storm caused _____ damage.",
+        "He suffered a _____ injury.",
+        "The doctor warned about the _____ illness."
+    ]
+},
+
+{
+    word: "significant",
+    sentences: [
+        "There was a _____ improvement.",
+        "This discovery is very _____.",
+        "The project had a _____ impact."
+    ]
+},
+
+{
+    word: "sincere",
+    sentences: [
+        "She gave a _____ apology.",
+        "His smile looked _____.",
+        "Thank you for your _____ kindness."
+    ]
+},
+
+{
+    word: "solitary",
+    sentences: [
+        "He enjoys _____ walks.",
+        "The tiger is usually a _____ animal.",
+        "She lived a _____ life in the mountains."
+    ]
+},
+
+{
+    word: "sort",
+    sentences: [
+        "What _____ of music do you like?",
+        "Please _____ these books by color.",
+        "This is my favorite _____ of cake."
+    ]
+},
+
+{
+    word: "soul",
+    sentences: [
+        "Many people believe the _____ lives forever.",
+        "Music can touch the _____.",
+        "She has a kind _____."
+    ]
+},
+
+{
+    word: "spectrum",
+    sentences: [
+        "The disease affects a wide _____ of people.",
+        "Light is made up of a color _____.",
+        "The discussion covered the full _____ of opinions."
+    ]
+},
+
+{
+    word: "sphere",
+    sentences: [
+        "The Earth is almost a perfect _____.",
+        "Education is an important _____ of life.",
+        "The glass _____ rolled across the table."
+    ]
+},
+
+{
+    word: "spite",
+    sentences: [
+        "He broke the toy out of _____.",
+        "She smiled in _____ of the criticism.",
+        "Don't act out of _____."
+    ]
+},
+
+{
+    word: "stain",
+    sentences: [
+        "Coffee _____ed my white shirt.",
+        "The carpet has a large _____.",
+        "Be careful not to _____ the tablecloth."
+    ]
+},
+
+{
+    word: "statistic",
+    sentences: [
+        "The _____ shows an increase in sales.",
+        "Every _____ in the report was carefully checked.",
+        "This _____ surprised many experts."
+    ]
+},
+
+{
+    word: "status",
+    sentences: [
+        "She has a high social _____.",
+        "Please check your application _____.",
+        "His _____ changed after the promotion."
+    ]
+},
+
+{
+    word: "strip",
+    sentences: [
+        "He _____ped the paint from the wall.",
+        "A _____ of paper was lying on the floor.",
+        "The workers _____ped the old wallpaper."
+    ]
+},
+
+{
+    word: "sufficient",
+    sentences: [
+        "We have _____ food for everyone.",
+        "The evidence was _____ to prove the case.",
+        "One hour is _____ to finish the work."
+    ]
+},
+
+{
+    word: "supplement",
+    sentences: [
+        "She takes a vitamin _____ every day.",
+        "This book is a useful _____ to the course.",
+        "Fresh fruit can _____ a healthy diet."
+    ]
+},
+
+{
+    word: "suspect",
+    sentences: [
+        "The police _____ him of theft.",
+        "The _____ was questioned by detectives.",
+        "I _____ something is wrong."
+    ]
+},
+
+{
+    word: "sue",
+    sentences: [
+        "She decided to _____ the company.",
+        "They threatened to _____ for damages.",
+        "The customer plans to _____ the restaurant."
+    ]
+},
+
+{
+    word: "swear",
+    sentences: [
+        "He _____ that he was telling the truth.",
+        "Please don't _____ in class.",
+        "She _____s she didn't take the money."
+    ]
+},
+
+{
+    word: "swing",
+    sentences: [
+        "The children love to _____ in the park.",
+        "The door began to _____ open.",
+        "He took a _____ at the baseball."
+    ]
+},
+
+{
+    word: "trial",
+    sentences: [
+        "The _____ lasted three weeks.",
+        "The new medicine is in _____.",
+        "The lawyer prepared for the _____."
+    ]
+},
+
+{
+    word: "tutor",
+    sentences: [
+        "She hired a _____ to improve her English.",
+        "The math _____ explained the problem clearly.",
+        "He works as a private _____."
+    ]
+},
+
+{
+    word: "twin",
+    sentences: [
+        "My _____ brother is older by five minutes.",
+        "The girls are identical _____.",
+        "She has a _____ sister."
+    ]
+},
+
+{
+    word: "unless",
+    sentences: [
+        "You won't pass _____ you study.",
+        "I won't leave _____ you come with me.",
+        "Don't call me _____ it's an emergency."
+    ]
+},
+
+{
+    word: "virtual",
+    sentences: [
+        "We had a _____ meeting yesterday.",
+        "The students attended a _____ classroom.",
+        "Many companies now offer _____ tours."
+    ]
+}
+
+];
+
+let questions = [];
+let current = 0;
+let score = 0;
+let mistakes = 0;
+let wrongAnswers = [];
+const MAX_QUESTIONS = 15;
+const MAX_MISTAKES = 3;
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+  questions = shuffle([...vocabulary]).slice(0, Math.min(MAX_QUESTIONS, vocabulary.length));
+  current = 0;
+  score = 0;
+  mistakes = 0;
+  wrongAnswers = [];
+
+  document.getElementById("score").innerText = "Score: 0";
+  document.getElementById("lives").innerText = "Lives: ❤️❤️❤️";
+  document.getElementById("review").innerHTML = "";
+
+  showQuestion();
+}
+
+function showQuestion() {
+  if (current >= questions.length) {
+    finishGame(false);
+    return;
+  }
+
+  const item = questions[current];
+  const sentence = shuffle([...item.sentences])[0];
+  item.currentSentence = sentence;
+
+  document.getElementById("progress").innerText =
+    "Question " + (current + 1) + " / " + questions.length;
+
+  document.getElementById("question").innerText = sentence;
+
+  let options = [item.word];
+
+  const wrongOptions = shuffle(
+    vocabulary
+      .map(v => v.word)
+      .filter(word => word !== item.word)
+  );
+
+  while (options.length < 4) {
+    options.push(wrongOptions.pop());
+  }
+
+  options = shuffle(options);
+
+  let html = "";
+  options.forEach(option => {
+    html += `<button class="choice" onclick="checkAnswer(this, '${option}')">${option}</button>`;
+  });
+
+  document.getElementById("choices").innerHTML = html;
+}
+
+function checkAnswer(button, selected) {
+  const correct = questions[current].word;
+  const buttons = document.querySelectorAll(".choice");
+
+  buttons.forEach(btn => btn.disabled = true);
+
+  if (selected === correct) {
+    button.classList.add("correct");
+    score++;
+  } else {
+    button.classList.add("wrong");
+    mistakes++;
+
+    wrongAnswers.push({
+      sentence: questions[current].currentSentence,
+      correct: correct,
+      selected: selected,
+      complete: questions[current].currentSentence.replace("_____", correct)
+    });
+
+    buttons.forEach(btn => {
+      if (btn.innerText === correct) {
+        btn.classList.add("correct");
+      }
+    });
+  }
+
+  updateScore();
+
+  setTimeout(() => {
+    if (mistakes > MAX_MISTAKES) {
+      finishGame(true);
+    } else {
+      current++;
+      showQuestion();
+    }
+  }, 900);
+}
+
+function updateScore() {
+  document.getElementById("score").innerText = "Score: " + score;
+
+  const livesLeft = Math.max(0, MAX_MISTAKES + 1 - mistakes);
+  document.getElementById("lives").innerText =
+    "Lives: " + "❤️".repeat(livesLeft) + "🤍".repeat(4 - livesLeft);
+}
+
+function finishGame(gameOver) {
+  document.getElementById("choices").innerHTML = "";
+
+  document.getElementById("question").innerHTML = gameOver
+    ? "💥 Game Over!"
+    : "🎉 Great job! You finished!";
+
+  document.getElementById("progress").innerText =
+    "Final Score: " + score + " / " + questions.length;
+
+  showReview();
+}
+
+function showReview() {
+  let html = "<div class='review'><h2>📖 Wrong Answer Review</h2>";
+
+  if (wrongAnswers.length === 0) {
+    html += "<p>Excellent! You made no mistakes! 🌟</p>";
+  } else {
+    wrongAnswers.forEach((item, index) => {
+      html += `
+        <p>
+          <b>${index + 1}. Sentence:</b> ${item.sentence}<br>
+          ❌ Your answer: ${item.selected}<br>
+          ✅ Correct answer: ${item.correct}<br>
+          ✔ Complete sentence: ${item.complete}
+        </p>
+        <hr>
+      `;
+    });
+  }
+
+  html += "</div>";
+  document.getElementById("review").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
