@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Vocabulary Meaning Game</title>
+<style>
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#ffefba,#ffffff);text-align:center;padding:20px}
+.game{max-width:850px;margin:auto;background:white;border-radius:25px;padding:25px;box-shadow:0 8px 20px #999}
+h1{color:#ff6f61}
+.meaning{font-size:24px;background:#e3f2fd;padding:25px;border-radius:20px;margin:20px}
+button{font-size:20px;margin:10px;padding:14px 25px;border:none;border-radius:15px;background:#4fc3f7;cursor:pointer}
+button:hover{background:#29b6f6}
+.choice{display:block;width:80%;margin:12px auto;background:#ffd54f}
+.correct{background:#81c784!important}
+.wrong{background:#e57373!important}
+.info{font-size:20px;margin:10px}
+.review{text-align:left;margin-top:20px;background:#f1f8e9;padding:20px;border-radius:15px}
+</style>
+</head>
+<body>
+
+<div class="game">
+<h1>🌟 Vocabulary Meaning Game 🌟</h1>
+<div class="info" id="info"></div>
+<div class="meaning" id="meaning">Press Start!</div>
+<div id="choices"></div>
+<button onclick="startGame()">Start / Restart</button>
+<div id="result"></div>
+</div>
+
+<script>
+const words = [
+{word:"abuse",meaning:"To treat someone or something badly."},
+{word:"abstract",meaning:"Existing as an idea rather than a physical object."},
+{word:"academy",meaning:"A school for special education or training."},
+{word:"accompany",meaning:"To go somewhere with someone."},
+{word:"accuse",meaning:"To say someone did something wrong."},
+{word:"adequate",meaning:"Good enough for a purpose."},
+{word:"admission",meaning:"Permission to enter; accepting the truth."},
+{word:"agriculture",meaning:"Farming and growing crops."},
+{word:"amuse",meaning:"To make someone laugh or enjoy themselves."},
+{word:"annual",meaning:"Happening once every year."},
+{word:"anxiety",meaning:"A feeling of worry or nervousness."},
+{word:"anxious",meaning:"Worried or nervous."},
+{word:"appliance",meaning:"A machine used in the home."},
+{word:"approve",meaning:"To agree that something is acceptable."},
+{word:"approximate",meaning:"Close to the correct amount or number."},
+{word:"atom",meaning:"The smallest unit of an element."},
+{word:"bare",meaning:"Without covering or decoration."},
+{word:"basin",meaning:"A large bowl or container for water."},
+{word:"bold",meaning:"Brave and confident."},
+{word:"breadth",meaning:"The distance from one side to another."},
+{word:"calculate",meaning:"To find an answer using math."},
+{word:"carriage",meaning:"A vehicle pulled by horses."},
+{word:"carve",meaning:"To cut or shape something with a tool."},
+{word:"cast",meaning:"To throw something."},
+{word:"century",meaning:"A period of 100 years."},
+{word:"charitable",meaning:"Kind and willing to help people in need."},
+{word:"chief",meaning:"Most important; a leader."},
+{word:"comet",meaning:"An object in space made of ice and rock."},
+{word:"committee",meaning:"A group chosen to do a task."},
+{word:"considerable",meaning:"Large in amount or size."},
+{word:"consist",meaning:"To be made up of."},
+{word:"contract",meaning:"A legal agreement."},
+{word:"congratulate",meaning:"To tell someone you are happy about their success."},
+{word:"convict",meaning:"To find someone guilty of a crime."},
+{word:"convert",meaning:"To change into a different form."},
+{word:"convey",meaning:"To communicate or carry something."},
+{word:"courage",meaning:"The ability to face fear or danger."},
+{word:"criticize",meaning:"To point out faults."},
+{word:"cupboard",meaning:"A cabinet used for storing things."},
+{word:"debt",meaning:"Money that is owed."},
+{word:"declare",meaning:"To announce something officially."},
+{word:"differ",meaning:"To be different."},
+{word:"delay",meaning:"To make something late."},
+{word:"delicate",meaning:"Easily damaged; needing careful handling."},
+{word:"depress",meaning:"To make someone feel sad."},
+{word:"despair",meaning:"A feeling of having no hope."},
+{word:"despite",meaning:"Without being affected by something."},
+{word:"detect",meaning:"To discover or notice something."},
+{word:"devote",meaning:"To give time or effort to something."},
+{word:"disadvantage",meaning:"Something that makes a situation less favorable."},
+{word:"disabled",meaning:"Having a condition that limits activities."},
+{word:"duty",meaning:"Something you are responsible for doing."},
+{word:"eager",meaning:"Very excited and ready to do something."},
+{word:"element",meaning:"A basic part of something."},
+{word:"elementary",meaning:"Basic or simple."},
+{word:"emerge",meaning:"To appear or come out."},
+{word:"enemy",meaning:"A person or group against you."},
+{word:"engage",meaning:"To become involved in something."},
+{word:"entrance",meaning:"A place where people enter."},
+{word:"exhaust",meaning:"To use up completely or make very tired."},
+{word:"exist",meaning:"To be real or present."},
+{word:"expose",meaning:"To reveal or uncover something."},
+{word:"failure",meaning:"Lack of success."},
+{word:"fame",meaning:"Being well known."},
+{word:"fault",meaning:"A mistake or responsibility for something wrong."},
+{word:"fertile",meaning:"Good for growing plants."},
+{word:"firm",meaning:"Strong and steady."},
+{word:"flood",meaning:"A large amount of water covering land."},
+{word:"forecast",meaning:"A prediction, especially about weather."},
+{word:"foundation",meaning:"The base of something."},
+{word:"fortune",meaning:"Great wealth or good luck."},
+{word:"fragment",meaning:"A small broken piece."},
+{word:"fund",meaning:"Money saved for a purpose."},
+{word:"generation",meaning:"People born around the same time."},
+{word:"geography",meaning:"The study of Earth’s land and features."},
+{word:"grand",meaning:"Large, impressive, or important."},
+{word:"grave",meaning:"Very serious."},
+{word:"gradual",meaning:"Happening slowly over time."},
+{word:"guarantee",meaning:"A promise that something will work or happen."},
+{word:"guilty",meaning:"Responsible for doing something wrong."},
+{word:"handle",meaning:"To deal with or manage something."},
+{word:"handicap",meaning:"Something that makes an activity more difficult."},
+{word:"hardly",meaning:"Almost not."},
+{word:"hidden",meaning:"Kept out of sight."},
+{word:"ideal",meaning:"Perfect or the best possible."},
+{word:"ignore",meaning:"To pay no attention to."},
+{word:"immigrant",meaning:"A person who moves to another country to live."},
+{word:"impression",meaning:"An opinion formed about someone or something."},
+{word:"initial",meaning:"Happening at the beginning."},
+{word:"inn",meaning:"A small hotel."},
+{word:"insist",meaning:"To strongly say something must happen."},
+{word:"intelligence",meaning:"The ability to learn and understand."},
+{word:"intend",meaning:"To plan or mean to do something."},
+{word:"intent",meaning:"Focused on something; purpose."},
+{word:"intended",meaning:"Planned or meant."},
+{word:"interfere",meaning:"To get involved and cause problems."},
+{word:"journalist",meaning:"A person who writes news stories."},
+{word:"legend",meaning:"An old story or very famous person."},
+{word:"loss",meaning:"The act of losing something."},
+{word:"marvel",meaning:"Something amazing."},
+{word:"minister",meaning:"A government or religious leader."},
+{word:"nevertheless",meaning:"However; in spite of that."},
+{word:"obey",meaning:"To do what someone tells you."},
+{word:"obtain",meaning:"To get or gain something."},
+{word:"occupation",meaning:"A person’s job."},
+{word:"officer",meaning:"A person with authority."},
+{word:"oppose",meaning:"To disagree with or fight against something."},
+{word:"original",meaning:"First; not copied."},
+{word:"passive",meaning:"Not active; accepting things without acting."},
+{word:"perhaps",meaning:"Maybe."},
+{word:"permanent",meaning:"Lasting for a very long time."},
+{word:"philosophy",meaning:"The study of life, knowledge, and ideas."},
+{word:"pleasant",meaning:"Nice and enjoyable."},
+{word:"portion",meaning:"A part or amount of something."},
+{word:"possess",meaning:"To own or have something."},
+{word:"potential",meaning:"Possible ability that can develop."},
+{word:"poverty",meaning:"The condition of being very poor."},
+{word:"pound",meaning:"A unit of weight or British money."},
+{word:"prevent",meaning:"To stop something from happening."},
+{word:"pride",meaning:"A feeling of satisfaction about achievement."},
+{word:"priest",meaning:"A religious leader."},
+{word:"proceed",meaning:"To continue or move forward."},
+{word:"process",meaning:"A series of steps."},
+{word:"profession",meaning:"A job that needs special training."},
+{word:"publish",meaning:"To produce a book or article for people to read."},
+{word:"pursue",meaning:"To follow or try to achieve something."},
+{word:"qualify",meaning:"To meet the requirements."},
+{word:"quantity",meaning:"The amount of something."},
+{word:"radiate",meaning:"To send out light, heat, or energy."},
+{word:"recall",meaning:"To remember."},
+{word:"reluctant",meaning:"Not willing to do something."},
+{word:"remind",meaning:"To help someone remember."},
+{word:"resemble",meaning:"To look like someone or something."},
+{word:"resist",meaning:"To fight against or refuse something."},
+{word:"religious",meaning:"Related to religion."},
+{word:"resort",meaning:"A vacation place; to use as a last choice."},
+{word:"romantic",meaning:"Related to love."},
+{word:"roam",meaning:"To move around freely."},
+{word:"satisfy",meaning:"To meet someone’s needs or make them happy."},
+{word:"scale",meaning:"A system for measuring or comparing."},
+{word:"secretary",meaning:"A person who helps organize office work."},
+{word:"secure",meaning:"Safe; protected."},
+{word:"severe",meaning:"Very serious or extreme."},
+{word:"significant",meaning:"Important or noticeable."},
+{word:"sincere",meaning:"Honest and genuine."},
+{word:"solitary",meaning:"Alone."},
+{word:"sort",meaning:"A type or kind; to organize."},
+{word:"soul",meaning:"The spiritual part of a person."},
+{word:"spectrum",meaning:"A complete range of different things."},
+{word:"sphere",meaning:"A round object; an area of activity."},
+{word:"spite",meaning:"A desire to hurt or annoy someone."},
+{word:"stain",meaning:"A dirty mark; to leave a mark."},
+{word:"statistic",meaning:"A number that shows information from data."},
+{word:"status",meaning:"A person’s position or condition."},
+{word:"strip",meaning:"To remove; a long narrow piece."},
+{word:"sufficient",meaning:"Enough for a purpose."},
+{word:"supplement",meaning:"Something added to improve or complete something."},
+{word:"suspect",meaning:"To think someone may be guilty."},
+{word:"sue",meaning:"To take legal action against someone."},
+{word:"such",meaning:"Of that kind or type."},
+{word:"swear",meaning:"To make a serious promise or use bad language."},
+{word:"swing",meaning:"To move back and forth."},
+{word:"trial",meaning:"A court examination or test."},
+{word:"tutor",meaning:"A person who gives private lessons."},
+{word:"twin",meaning:"One of two children born at the same time."},
+{word:"unless",meaning:"If not."},
+{word:"virtual",meaning:"Existing online or by computer."}
+];
+
+let gameWords = [];
+let current = 0;
+let score = 0;
+let mistakes = 0;
+let wrongAnswers = [];
+
+function shuffle(array){
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startGame(){
+  gameWords = shuffle([...words]).slice(0,15);
+  current = 0;
+  score = 0;
+  mistakes = 0;
+  wrongAnswers = [];
+  document.getElementById("result").innerHTML = "";
+  showQuestion();
+}
+
+function showQuestion(){
+  if(current >= gameWords.length){
+    endGame(false);
+    return;
+  }
+
+  const q = gameWords[current];
+  document.getElementById("info").innerHTML =
+    `Question ${current+1}/15 | Score: ${score} | Mistakes: ${mistakes}/3`;
+
+  document.getElementById("meaning").innerHTML = "📖 " + q.meaning;
+
+  let options = [q.word];
+  let otherWords = shuffle(words.filter(w => w.word !== q.word));
+
+  while(options.length < 4){
+    options.push(otherWords.pop().word);
+  }
+
+  options = shuffle(options);
+
+  let html = "";
+  options.forEach(option => {
+    html += `<button class="choice" onclick="checkAnswer(this,'${option}')">${option}</button>`;
+  });
+
+  document.getElementById("choices").innerHTML = html;
+}
+
+function checkAnswer(button, selected){
+  const correct = gameWords[current].word;
+  const allButtons = document.querySelectorAll(".choice");
+
+  allButtons.forEach(btn => btn.disabled = true);
+
+  if(selected === correct){
+    button.classList.add("correct");
+    score++;
+  } else {
+    button.classList.add("wrong");
+    mistakes++;
+    wrongAnswers.push({
+      meaning: gameWords[current].meaning,
+      correct: correct,
+      selected: selected
+    });
+
+    allButtons.forEach(btn => {
+      if(btn.innerText === correct){
+        btn.classList.add("correct");
+      }
+    });
+  }
+
+  setTimeout(() => {
+    if(mistakes > 3){
+      endGame(true);
+    } else {
+      current++;
+      showQuestion();
+    }
+  }, 900);
+}
+
+function endGame(gameOver){
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("meaning").innerHTML = gameOver ? "💥 Game Over!" : "🎉 Great Job!";
+  document.getElementById("info").innerHTML = `Final Score: ${score}/15 | Mistakes: ${mistakes}`;
+
+  let review = "<div class='review'><h2>Wrong Answer Review</h2>";
+
+  if(wrongAnswers.length === 0){
+    review += "<p>Excellent! You made no mistakes! 🌟</p>";
+  } else {
+    wrongAnswers.forEach((item, index) => {
+      review += `
+      <p>
+      <b>${index+1}. Meaning:</b> ${item.meaning}<br>
+      ❌ Your answer: ${item.selected}<br>
+      ✅ Correct answer: ${item.correct}
+      </p><hr>`;
+    });
+  }
+
+  review += "</div>";
+  document.getElementById("result").innerHTML = review;
+}
+</script>
+
+</body>
+</html>
