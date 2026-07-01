@@ -1,0 +1,279 @@
+<!-- Replace your whole code with this updated version -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulary Game</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  margin: 0;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+h1 { text-align: center; color: #2b5dad; }
+.question-box {
+  background: #eef4ff;
+  padding: 25px;
+  border-radius: 14px;
+  margin-top: 20px;
+}
+.options {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+.option {
+  padding: 14px;
+  font-size: 18px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+}
+.option:hover { background: #e9f1ff; }
+.selected {
+  background: #cfe2ff;
+  border-color: #2b5dad;
+  font-weight: bold;
+}
+.main-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #2b5dad;
+  color: white;
+  cursor: pointer;
+}
+.main-btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+.result {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #f0f0f0;
+}
+.correct { color: green; font-weight: bold; }
+.wrong { color: red; font-weight: bold; }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Vocabulary Matching Game</h1>
+  <p>Read the meaning and choose the correct word.</p>
+
+  <div id="game"></div>
+
+  <button id="nextBtn" class="main-btn" onclick="nextQuestion()" disabled>Next</button>
+  <button id="restartBtn" class="main-btn" onclick="startGame()" style="display:none;">Restart Game</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+const vocabulary = [
+  { word: "absence", meaning: "The state of not being present." },
+  { word: "bald", meaning: "Having little or no hair." },
+  { word: "divorce", meaning: "The legal end of a marriage." },
+  { word: "imitate", meaning: "To copy someone or something." },
+  { word: "infant", meaning: "A very young baby." },
+  { word: "kidnap", meaning: "To take someone away by force." },
+  { word: "relief", meaning: "A feeling that worry or pain is gone." },
+  { word: "urgent", meaning: "Needing to be done right away." },
+  { word: "vanish", meaning: "To disappear suddenly." },
+  { word: "wagon", meaning: "A vehicle with four wheels used to carry things." },
+  { word: "wrinkle", meaning: "A small line or fold in skin or fabric." },
+  { word: "ally", meaning: "A person or country that helps another." },
+  { word: "boast", meaning: "To talk too proudly about yourself." },
+  { word: "dial", meaning: "To enter a phone number to make a call." },
+  { word: "dominant", meaning: "Stronger or more important than others." },
+  { word: "entire", meaning: "Whole or complete." },
+  { word: "mercy", meaning: "Kindness or forgiveness toward someone." },
+  { word: "opponent", meaning: "A person you compete against." },
+  { word: "quarrel", meaning: "An angry argument." },
+  { word: "sore", meaning: "Painful or hurting." },
+  { word: "strain", meaning: "To use a lot of effort or pressure." },
+  { word: "torture", meaning: "To cause extreme pain or suffering." },
+  { word: "wrestle", meaning: "To fight by holding and trying to throw someone down." },
+  { word: "anniversary", meaning: "The date something important happened in a past year." },
+  { word: "arithmetic", meaning: "Basic math using numbers." },
+  { word: "ashamed", meaning: "Feeling bad because you did something wrong." },
+  { word: "burst", meaning: "To break open suddenly." },
+  { word: "carpenter", meaning: "A person who builds or repairs things made of wood." },
+  { word: "elegant", meaning: "Stylish, graceful, and attractive." },
+  { word: "ivory", meaning: "A hard white material from elephant tusks." },
+  { word: "mill", meaning: "A building where grain or materials are processed." },
+  { word: "polish", meaning: "To make something smooth and shiny." },
+  { word: "thread", meaning: "A thin string used for sewing." },
+  { word: "trim", meaning: "To cut a small amount to make something neat." },
+  { word: "mutual", meaning: "Shared or felt by both sides." },
+  { word: "alert", meaning: "Watchful and ready to notice danger." },
+  { word: "bulletin", meaning: "A short official news or information report." },
+  { word: "closet", meaning: "A small space for storing clothes or things." },
+  { word: "console", meaning: "To comfort someone who is sad." },
+  { word: "district", meaning: "A part of a town or city." },
+  { word: "drawer", meaning: "A box that slides in and out of furniture." },
+  { word: "endure", meaning: "To suffer through something difficult." },
+  { word: "execute", meaning: "To carry out or perform a plan or order." },
+  { word: "grasp", meaning: "To hold something firmly." },
+  { word: "rear", meaning: "The back part of something." },
+  { word: "skull", meaning: "The bones of the head that protect the brain." },
+  { word: "stir", meaning: "To mix something by moving it around." },
+  { word: "tremendous", meaning: "Very great, large, or excellent." }
+];
+
+let questions = [];
+let currentQuestion = 0;
+let answers = [];
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+  questions = shuffle([...vocabulary]).slice(0, 15);
+  currentQuestion = 0;
+  answers = [];
+
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("restartBtn").style.display = "none";
+  document.getElementById("nextBtn").style.display = "block";
+  document.getElementById("nextBtn").disabled = true;
+  document.getElementById("nextBtn").innerText = "Next";
+
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentQuestion];
+
+  let wrongOptions = vocabulary
+    .filter(item => item.word !== q.word)
+    .map(item => item.word);
+
+  wrongOptions = shuffle(wrongOptions).slice(0, 3);
+  let options = shuffle([q.word, ...wrongOptions]);
+
+  document.getElementById("game").innerHTML = `
+    <div class="question-box">
+      <h2>Question ${currentQuestion + 1} / 15</h2>
+      <p><strong>Meaning:</strong> ${q.meaning}</p>
+
+      <div class="options">
+        ${options.map(option => `
+          <button class="option" onclick="selectAnswer('${option}', this)">
+            ${option}
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  document.getElementById("nextBtn").disabled = true;
+
+  if (currentQuestion === 14) {
+    document.getElementById("nextBtn").innerText = "Finish";
+  } else {
+    document.getElementById("nextBtn").innerText = "Next";
+  }
+}
+
+function selectAnswer(selectedWord, button) {
+  answers[currentQuestion] = selectedWord;
+
+  const buttons = document.querySelectorAll(".option");
+  buttons.forEach(btn => btn.classList.remove("selected"));
+
+  button.classList.add("selected");
+  document.getElementById("nextBtn").disabled = false;
+}
+
+function nextQuestion() {
+  if (currentQuestion < 14) {
+    currentQuestion++;
+    showQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function getMeaning(word) {
+  const item = vocabulary.find(v => v.word === word);
+  return item ? item.meaning : "No meaning found.";
+}
+
+function showResults() {
+  let score = 0;
+  let mistakes = [];
+
+  questions.forEach((q, index) => {
+    if (answers[index] === q.word) {
+      score++;
+    } else {
+      mistakes.push({
+        number: index + 1,
+        questionMeaning: q.meaning,
+        correctWord: q.word,
+        correctMeaning: q.meaning,
+        chosenWord: answers[index] || "No answer",
+        chosenMeaning: answers[index] ? getMeaning(answers[index]) : "No meaning because no answer was chosen."
+      });
+    }
+  });
+
+  let resultHTML = `
+    <div class="result">
+      <h2>Your Score: ${score} / 15</h2>
+  `;
+
+  if (mistakes.length === 0) {
+    resultHTML += `<p class="correct">Excellent! All answers are correct.</p>`;
+  } else {
+    resultHTML += `<h3>Mistakes Review</h3>`;
+
+    mistakes.forEach(mistake => {
+      resultHTML += `
+        <p>
+          <strong>Question ${mistake.number}</strong><br>
+          <strong>Meaning shown:</strong> ${mistake.questionMeaning}<br><br>
+
+          Your answer: 
+          <span class="wrong">${mistake.chosenWord}</span><br>
+          <strong>Meaning of your answer:</strong> ${mistake.chosenMeaning}<br><br>
+
+          Correct answer: 
+          <span class="correct">${mistake.correctWord}</span><br>
+          <strong>Correct meaning:</strong> ${mistake.correctMeaning}
+        </p>
+        <hr>
+      `;
+    });
+  }
+
+  resultHTML += `</div>`;
+
+  document.getElementById("game").innerHTML = "";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("restartBtn").style.display = "block";
+  document.getElementById("result").innerHTML = resultHTML;
+}
+
+startGame();
+</script>
+</body>
+</html>
